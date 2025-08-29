@@ -22,7 +22,7 @@ jobs:
       - name: Run container test (check health)
         run: |
           docker run -d --rm -p 8000:3000 --name fastapi-test fastapi-app:test
-          sleep 1
+          sleep 2
       - name: Healthcheck
         run: |
           curl --fail http://127.0.0.1:8000/docs
