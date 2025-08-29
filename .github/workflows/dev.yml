@@ -2,7 +2,7 @@ name: Build & Test FastAPI Image
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: ["dev"]
 
 jobs:
   docker-build:
@@ -21,7 +21,9 @@ jobs:
 
       - name: Run container test (check health)
         run: |
-          docker run -d --rm -p 8000:8000 --name fastapi-test fastapi-app:test
-          sleep 10
+          docker run -d --rm -p 8000:3000 --name fastapi-test fastapi-app:test
+          sleep 3
+      - name: Healthcheck
+        run: |
           curl --fail http://127.0.0.1:8000/docs
           docker stop fastapi-test
