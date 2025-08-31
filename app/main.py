@@ -1,15 +1,13 @@
-from typing import Union
-
 from fastapi import FastAPI
+from app.core.config import settings
 
 app = FastAPI()
 
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+    return {
+        "Hello": str(settings.SQLALCHEMY_DATABASE_URI),
+        "type": str(type(settings.SQLALCHEMY_DATABASE_URI)),
+        "message": "Archivo escrito correctamente 🚀",
+    }
