@@ -8,8 +8,8 @@ class Country(SQLModel, table=True):
     name: str = Field(unique=True, nullable=False, max_length=100)
     nice_name: str = Field(unique=True, nullable=False, max_length=100)
     iso3: str = Field(unique=True, nullable=True, default=None, max_length=3)
-    num_code: int = Field(unique=True, nullable=True, default=None, max_digits=6)
-    phone_code: int = Field(unique=True, nullable=False, max_digits=5)
+    num_code: int = Field(nullable=True, default=None, max_digits=6)
+    phone_code: int = Field(nullable=False, max_digits=5)
 
 
 class CountriesPublic(SQLModel):
