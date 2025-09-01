@@ -5,7 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.16.5",
     "fastapi[standard]>=0.116.1",
+    "httpx>=0.28.1",
     "psycopg2-binary>=2.9.10",
+    "pydantic-settings>=2.10.1",
     "python-dotenv>=1.1.1",
+    "sqlmodel>=0.0.24",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.17.1",
+    "pytest>=8.4.1",
+    "ruff>=0.12.11",
 ]
