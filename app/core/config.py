@@ -1,5 +1,6 @@
 import secrets
 from typing import Literal
+
 from pydantic import (
     PostgresDsn,
     computed_field,

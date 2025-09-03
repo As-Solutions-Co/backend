@@ -1,5 +1,6 @@
-from sqlmodel import SQLModel, Field
-from uuid import uuid4, UUID
+from uuid import UUID, uuid4
+
+from sqlmodel import Field, SQLModel
 
 
 class Country(SQLModel, table=True):

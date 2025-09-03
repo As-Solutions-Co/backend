@@ -1,7 +1,9 @@
-from sqlmodel import select, Session
-from app.models.country import Country
 from typing import List, Optional
 from uuid import UUID
+
+from sqlmodel import Session, select
+
+from app.models.country import Country
 
 
 def get_all_countries(
@@ -14,3 +16,8 @@ def get_all_countries(
 def get_country_by_id(session: Session, country_id: UUID) -> Optional[Country]:
     stmt = select(Country).where(Country.id == country_id)
     return session.exec(stmt).first()
+
+
+def get_country_by_name(session: Session, name: str) -> Optional[Country]:
+    stmt = select(Country).where(Country.nice_name.ilike(f"{name}%"))
+    return session.exec(stmt).all()
