@@ -3,11 +3,11 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.models.country import Country
+from app.models.country_model import Country
 
 
 def get_all_countries(
-    session: Session, skip: int = 0, limit: int = 10
+    session: Session, skip: int = 0, limit: int | None = 10
 ) -> List[Country]:
     stmt = select(Country).offset(skip).limit(limit)
     return session.exec(stmt).all()

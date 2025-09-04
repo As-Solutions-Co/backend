@@ -8,7 +8,7 @@ from app.crud.country_crud import (
     get_country_by_id,
     get_country_by_name,
 )
-from app.models.country import CountriesPublic, Country
+from app.models.country_model import CountriesPublic, Country
 
 
 def get_countries_service(
@@ -16,9 +16,11 @@ def get_countries_service(
 ) -> CountriesPublic:
     if name:
         countries = get_country_by_name(session, name)
+        if not countries:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Countries not found")
     else:
-        countries = get_all_countries(session, skip=skip, limit=limit)
-    total = len(countries)
+        countries = get_all_countries(session, skip, limit)
+    total = len(get_all_countries(session, 0, None))
     return CountriesPublic(data=countries, count=total)
 
 
