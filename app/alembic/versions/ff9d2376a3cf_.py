@@ -6,13 +6,13 @@ Create Date: 2025-09-01 17:04:04.939910
 
 """
 
+import json
+import os
 from typing import Sequence, Union
+
+import sqlalchemy as sa
 import sqlmodel
 from alembic import op
-import sqlalchemy as sa
-import os
-import json
-
 
 # revision identifiers, used by Alembic.
 revision: str = "ff9d2376a3cf"
