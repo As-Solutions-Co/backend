@@ -8,3 +8,4 @@ class AppUser(SQLModel, table=True):
     id: UUID = Field(primary_key=True, default_factory=uuid4)
     first_name: str = Field(max_length=100)
     last_name: str = Field(max_length=100)
+    document_type_id: UUID = Field(foreign_key="document_type.id")
