@@ -1,4 +1,4 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.models import Organization, OrganizationCreate
 
 
@@ -10,3 +10,8 @@ def create_organization(
     session.flush()
     session.refresh(organization)
     return organization
+
+
+def read_organization_by_name(session: Session, name: str) -> Organization | None:
+    stmt = select(Organization).where(Organization.name == name)
+    return session.exec(stmt).first()
