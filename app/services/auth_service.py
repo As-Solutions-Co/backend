@@ -4,13 +4,21 @@ from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException, status
 
 from app.crud.document_type_crud import read_document_type_by_id
+from app.crud.invalid_token_crud import create_invalid_token
 from app.crud.user_type import read_user_type_by_name
-from app.crud.organization_crud import create_organization, read_organization_by_name
-from app.crud.app_user_crud import create_app_user
+from app.crud.organization_crud import (
+    create_organization,
+    read_organization_by_id,
+    read_organization_by_name,
+)
+from app.crud.app_user_crud import create_app_user, read_app_user_by_username
 from app.models.app_user_model import AppUser
 from app.models import Organization, AppUser as AppUserModel
+from app.models.invalid_token_model import InvalidToken
 from app.schemas.auth_schema import RegisterRequest
-from app.utils.security import hash_password
+from app.schemas.token_schema import Token
+from app.utils.security import generate_token, hash_password, check_password
+from fastapi.security import OAuth2PasswordRequestForm
 
 
 def register_service(
@@ -57,3 +65,32 @@ def register_service(
     except SQLAlchemyError:
         session.rollback()
         raise
+
+
+def login_service(session: Session, form_data: OAuth2PasswordRequestForm) -> Token:
+    username = form_data.username
+    password = form_data.password
+    user = read_app_user_by_username(session, username)
+
+    if not user or not check_password(password, user.password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
+        )
+
+    organization = read_organization_by_id(session, user.organization_id)
+    payload = {
+        "user_id": str(user.id),
+        "organization_id": str(organization.id),
+        "main_color": str(organization.main_color),
+    }
+    token = generate_token(payload)
+    return Token(access_token=token)
+
+
+def logout_service(session: Session, token: str) -> InvalidToken:
+    try:
+        invalid_token = create_invalid_token(session, token)
+        session.commit()
+        return invalid_token
+    except:
+        session.rollback()
