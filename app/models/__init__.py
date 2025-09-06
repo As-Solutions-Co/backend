@@ -8,6 +8,7 @@ from .organization_model import (
     OrganizationCreate,
 )
 from .user_type_model import UserType, UserTypeBase, UserTypeResponse
+from .invalid_token_model import InvalidToken
 
 __all__ = [
     "AppUser",
@@ -26,4 +27,5 @@ __all__ = [
     "UserType",
     "UserTypeBase",
     "UserTypeResponse",
+    "InvalidToken",
 ]
