@@ -1,20 +1,15 @@
 from fastapi import APIRouter
 from app.api.deps import SessionDep
 from app.models import AppUserRegistration, OrganizationCreate
-from app.services.auth_service import post_user_organization_service
+from app.schemas.auth_schema import RegisterRequest
+from app.services.auth_service import register_service
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @auth_router.post("/register")
-def register(
-    session: SessionDep,
-    user_data: AppUserRegistration,
-    organization_data: OrganizationCreate,
-):
-    organization, admin_user = post_user_organization_service(
-        session, user_data, organization_data
-    )
+def register(session: SessionDep, register_data: RegisterRequest):
+    organization, admin_user = register_service(session, register_data)
     return {
         "organization": organization,
         "admin_user": admin_user,
