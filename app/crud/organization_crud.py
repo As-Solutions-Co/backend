@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlmodel import Session, select
 from app.models import Organization, OrganizationCreate
 
@@ -14,4 +15,9 @@ def create_organization(
 
 def read_organization_by_name(session: Session, name: str) -> Organization | None:
     stmt = select(Organization).where(Organization.name == name)
+    return session.exec(stmt).first()
+
+
+def read_organization_by_id(session: Session, id: UUID) -> Organization | None:
+    stmt = select(Organization).where(Organization.id == id)
     return session.exec(stmt).first()
