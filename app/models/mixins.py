@@ -1,7 +1,8 @@
-from sqlmodel import Field, SQLModel
-from sqlalchemy import func
-from uuid import UUID, uuid4
 from datetime import datetime
+from uuid import UUID, uuid4
+
+from sqlalchemy import func
+from sqlmodel import Field, SQLModel
 
 
 class IdMixin(SQLModel):

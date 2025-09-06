@@ -1,6 +1,8 @@
 from uuid import UUID
+
+from sqlmodel import Field, SQLModel
+
 from app.models.mixins import MixinBase
-from sqlmodel import SQLModel, Field
 
 
 class UserTypeBase(SQLModel):

@@ -1,10 +1,11 @@
-from typing import List
 from uuid import UUID
-from app.models.user_type_model import UserType
+
 from sqlmodel import Session, select
 
+from app.models.user_type_model import UserType
 
-def read_all_user_types(session: Session) -> List[UserType]:
+
+def read_all_user_types(session: Session) -> list[UserType]:
     stmt = select(UserType)
     return session.exec(stmt).all()
 

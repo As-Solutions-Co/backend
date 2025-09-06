@@ -1,5 +1,6 @@
 from uuid import UUID
-from sqlmodel import SQLModel, Field, UniqueConstraint
+
+from sqlmodel import SQLModel
 
 from app.models.mixins import MixinBase
 

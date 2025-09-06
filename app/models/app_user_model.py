@@ -1,13 +1,12 @@
-from datetime import date, datetime
-from uuid import UUID, uuid4
+from datetime import date
+from enum import Enum
+from uuid import UUID
+
 from pydantic import EmailStr
-from sqlmodel import Column, Field, SQLModel, UniqueConstraint
 from sqlalchemy import Enum as SqlEnum
+from sqlmodel import Column, Field, SQLModel, UniqueConstraint
 
 from app.models.mixins import MixinBase
-
-
-from enum import Enum
 
 
 class UserStatus(str, Enum):

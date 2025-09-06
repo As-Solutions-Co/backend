@@ -1,6 +1,8 @@
 from uuid import UUID
+
 from sqlmodel import Session, select
-from app.models import AppUserRegistration, AppUser
+
+from app.models import AppUser
 
 
 def create_app_user(session: Session, user_data: AppUser):

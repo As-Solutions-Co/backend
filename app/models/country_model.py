@@ -1,6 +1,6 @@
-from .mixins import MixinBase
-
 from sqlmodel import Field, SQLModel
+
+from .mixins import MixinBase
 
 
 class Country(MixinBase, table=True):

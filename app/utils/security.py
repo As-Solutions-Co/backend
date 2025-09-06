@@ -1,9 +1,10 @@
-from typing import Any, Dict
-import bcrypt
-from app.core.config import settings
-import jwt
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
+import bcrypt
+import jwt
+
+from app.core.config import settings
 from app.schemas.token_payload import TokenPayload
 
 ALGORITHM = "HS256"
@@ -24,7 +25,7 @@ def check_password(password: str, hashed_password: str) -> bool:
 
 def generate_token(payload: dict[str, Any]) -> str:
     time_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    created_at = datetime.now(timezone.utc)
+    created_at = datetime.now(UTC)
     expire = created_at + time_delta
     payload["exp"] = expire
     payload["iat"] = int(created_at.timestamp())

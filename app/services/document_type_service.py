@@ -1,19 +1,18 @@
-from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, status
 from sqlmodel import Session
 
 from app.crud.document_type_crud import (
-    read_document_types_by_country_id,
     read_document_type_by_id,
+    read_document_types_by_country_id,
 )
 from app.models import DocumentType
 
 
 def get_document_types_by_country_service(
     session: Session, country_id: UUID
-) -> List[DocumentType] | None:
+) -> list[DocumentType] | None:
     document_types = read_document_types_by_country_id(session, country_id)
     if not document_types:
         raise HTTPException(
@@ -24,7 +23,7 @@ def get_document_types_by_country_service(
 
 def get_document_type_by_id_service(
     session: Session, id: UUID
-) -> List[DocumentType] | None:
+) -> list[DocumentType] | None:
     document_types = read_document_type_by_id(session, id)
     if not document_types:
         raise HTTPException(

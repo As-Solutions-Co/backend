@@ -1,8 +1,7 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from sqlmodel import Field, SQLModel, select
+from sqlmodel import Field
 
-from app.models import Country
 from app.models.mixins import MixinBase
 
 

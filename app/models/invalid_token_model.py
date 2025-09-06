@@ -1,7 +1,9 @@
-from .mixins import IdMixin
-from sqlmodel import Field
-from sqlalchemy import func
 from datetime import datetime
+
+from sqlalchemy import func
+from sqlmodel import Field
+
+from .mixins import IdMixin
 
 
 class InvalidToken(IdMixin, table=True):

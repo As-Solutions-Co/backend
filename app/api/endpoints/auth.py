@@ -1,12 +1,12 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status
-from app.api.deps import CurrentUserDep, SessionDep, TokenDep
-from app.crud.app_user_crud import read_app_user_by_username
-from app.models import AppUserRegistration, OrganizationCreate
-from app.schemas.auth_schema import RegisterRequest
-from app.services.auth_service import login_service, logout_service, register_service
+
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+
+from app.api.deps import SessionDep, TokenDep
+from app.schemas.auth_schema import RegisterRequest
 from app.schemas.token_schema import Token
+from app.services.auth_service import login_service, logout_service, register_service
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
