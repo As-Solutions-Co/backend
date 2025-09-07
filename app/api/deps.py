@@ -8,9 +8,9 @@ from sqlmodel import Session
 
 from app.core.config import settings
 from app.core.db import engine
+from app.core.security import check_token
 from app.crud.app_user_crud import read_app_user_by_id
 from app.models.app_user_model import AppUser
-from app.utils.security import check_token
 
 
 def get_db() -> Generator[Session]:
