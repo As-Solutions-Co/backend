@@ -1,9 +1,11 @@
 import random
 from uuid import uuid4
-from fastapi.testclient import TestClient
-from app.core.config import settings
-from httpx import Response
+
 import pytest
+from fastapi.testclient import TestClient
+from httpx import Response
+
+from app.core.config import settings
 
 countries_url = "/".join([settings.API_V1_STR, "countries"])
 expected_keys = {"id", "iso", "name", "nice_name", "iso3", "num_code", "phone_code"}
