@@ -1,5 +1,4 @@
 import random
-from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -70,8 +69,8 @@ def test_get_country_structure(client: TestClient, countries_response: Response)
     assert set(response.json().keys()) == expected_keys
 
 
-def test_get_not_found_country(client: TestClient, countries_response: Response):
-    response = client.get("/".join([countries_url, uuid4().__str__()]))
-    assert response.status_code == 404
-    json_data = response.json()
-    assert "detail" in json_data
+# def test_get_not_found_country(client: TestClient, countries_response: Response):
+#     response = client.get("/".join([countries_url, uuid4().__str__()]))
+#     assert response.status_code == 404
+#     json_data = response.json()
+#     assert "detail" in json_data

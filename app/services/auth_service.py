@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session
 
+from app.core.security import check_password, generate_token, hash_password
 from app.crud.app_user_crud import create_app_user, read_app_user_by_username
 from app.crud.document_type_crud import read_document_type_by_id
 from app.crud.invalid_token_crud import create_invalid_token
@@ -18,7 +19,6 @@ from app.models.app_user_model import AppUser
 from app.models.invalid_token_model import InvalidToken
 from app.schemas.auth_schema import RegisterRequest
 from app.schemas.token_schema import Token
-from app.utils.security import check_password, generate_token, hash_password
 
 
 def register_service(
