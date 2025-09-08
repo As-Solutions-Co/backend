@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from app.api.deps import SessionDep
-from app.models import CountriesPublic, Country
+from app.models.country_model import CountriesPublic, Country
 from app.services.country_service import get_countries_service, get_country_service
 
 country_router = APIRouter(prefix="/countries", tags=["Countries"])

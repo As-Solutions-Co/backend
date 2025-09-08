@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.models import Organization, OrganizationCreate
+from app.models.organization_model import Organization, OrganizationCreate
 
 
 def create_organization(
@@ -10,8 +10,6 @@ def create_organization(
 ) -> Organization:
     organization = Organization(**organization_data.model_dump())
     session.add(organization)
-    session.flush()
-    session.refresh(organization)
     return organization
 
 

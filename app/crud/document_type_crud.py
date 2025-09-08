@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.models import DocumentType
+from app.models.document_type_model import DocumentType
 
 
 def read_document_types(session: Session) -> list[DocumentType]:

@@ -7,7 +7,7 @@ from app.crud.document_type_crud import (
     read_document_type_by_id,
     read_document_types_by_country_id,
 )
-from app.models import DocumentType
+from app.models.document_type_model import DocumentType
 
 
 def get_document_types_by_country_service(
