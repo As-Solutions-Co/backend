@@ -8,9 +8,9 @@ from app.core.config import settings
 from app.models import (
     AppUser,  # noqa: F401
     Country,  # noqa: F401
-    DocumentType,  # noqa: F401
+    # DocumentType,  # noqa: F401
     Organization,  # noqa: F401
-    UserType,  # noqa: F401
+    # UserType,  # noqa: F401
     InvalidToken,  # noqa: F401
 )
 

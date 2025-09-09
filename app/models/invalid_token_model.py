@@ -12,3 +12,5 @@ class InvalidToken(IdMixin, table=True):
         sa_column_kwargs={"server_default": func.now()},
         nullable=False,
     )
+
+    __tablename__ = "invalid_token"
