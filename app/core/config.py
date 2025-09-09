@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    AWS_S3_BUCKET_NAME: str
+    AWS_REGION: str
+    AWS_ACCESS_KEY: str
+    AWS_SECRET_KEY: str
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
