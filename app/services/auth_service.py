@@ -1,70 +1,54 @@
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
-from app.core.security import check_password, generate_token, hash_password
+from app.core.security import generate_token, verify_password
 from app.crud.app_user_crud import create_app_user, read_app_user_by_username
-from app.crud.document_type_crud import read_document_type_by_id
 from app.crud.invalid_token_crud import create_invalid_token
 from app.crud.organization_crud import (
-    create_organization,
+    read_organization_by_dane_code,
     read_organization_by_id,
-    read_organization_by_name,
 )
-from app.crud.user_type import read_user_type_by_name
-from app.models import AppUser as AppUserModel
 from app.models import Organization
 from app.models.app_user_model import AppUser
 from app.models.invalid_token_model import InvalidToken
 from app.schemas.auth_schema import RegisterRequest
 from app.schemas.token_schema import Token
+from app.utils.dane import get_legal_information_from_dane
 
 
-def register_service(
-    session: Session, register_data: RegisterRequest
-) -> dict[str, Organization | AppUserModel]:
-    organization_data = register_data.organization_data
-    user_data = register_data.user_data
-
-    if read_organization_by_name(session, organization_data.name):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An organization with this name already exists.",
-        )
-
-    document_type = read_document_type_by_id(session, user_data.document_type_id)
-    if not document_type:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Document type with id {user_data.document_type_id} not found",
-        )
-
-    admin_user_type = read_user_type_by_name(session, name="admin")
-
+def register_service(session: Session, register_data: RegisterRequest):
+    organization_in = register_data.organization_data
     try:
-        new_organization = create_organization(session, organization_data)
+        if read_organization_by_dane_code(session, organization_in.dane_code):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="An organization with this dane_code already exists.",
+            )
+
+        organization_dane = get_legal_information_from_dane(organization_in.dane_code)
+        if not organization_dane:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Organization with dane_code {organization_in.dane_code} not found.",
+            )
+
+        organization_data = organization_in.model_dump()
+        organization_data.update(organization_dane.model_dump())
+        organization = Organization(**organization_data)
+        session.add(organization)
         session.flush()
-
-        user_data_extended = AppUser(
-            **user_data.model_dump(),
-            organization_id=new_organization.id,
-            user_type_id=admin_user_type.id,
+        user_in = register_data.user_data
+        user = create_app_user(
+            session, AppUser(**user_in.model_dump(), organization_id=organization.id)
         )
-
-        user_data_extended.password = hash_password(user_data_extended.password)
-
-        admin_user = create_app_user(session, user_data_extended)
-
         session.commit()
-        session.refresh(new_organization)
-        session.refresh(admin_user)
-
-        return {"organization": new_organization, "admin_user": admin_user}
-
-    except SQLAlchemyError:
+        session.refresh(organization)
+        session.refresh(user)
+        return organization, user
+    except IntegrityError:
         session.rollback()
-        raise
 
 
 def login_service(session: Session, form_data: OAuth2PasswordRequestForm) -> Token:
@@ -72,7 +56,7 @@ def login_service(session: Session, form_data: OAuth2PasswordRequestForm) -> Tok
     password = form_data.password
     user = read_app_user_by_username(session, username)
 
-    if not user or not check_password(password, user.password):
+    if not user or not verify_password(password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
