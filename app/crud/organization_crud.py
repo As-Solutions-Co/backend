@@ -2,13 +2,10 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.models.organization_model import Organization, OrganizationCreate
+from app.models.organization_model import Organization
 
 
-def create_organization(
-    session: Session, organization_data: OrganizationCreate
-) -> Organization:
-    organization = Organization(**organization_data.model_dump())
+def create_organization(session: Session, organization: Organization) -> Organization:
     session.add(organization)
     return organization
 
@@ -20,4 +17,9 @@ def read_organization_by_name(session: Session, name: str) -> Organization | Non
 
 def read_organization_by_id(session: Session, id: UUID) -> Organization | None:
     stmt = select(Organization).where(Organization.id == id)
+    return session.exec(stmt).first()
+
+
+def read_organization_by_dane_code(session: Session, code: str) -> Organization | None:
+    stmt = select(Organization).where(Organization.dane_code == code)
     return session.exec(stmt).first()

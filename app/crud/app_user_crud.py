@@ -2,14 +2,14 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
+from app.core.security import hash_password
 from app.models import AppUser
 
 
 def create_app_user(session: Session, user_data: AppUser):
     app_user = AppUser(**user_data.model_dump())
+    app_user.password = hash_password(app_user.password)
     session.add(app_user)
-    session.flush()
-    session.refresh(app_user)
     return app_user
 
 
