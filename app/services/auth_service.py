@@ -76,5 +76,6 @@ def logout_service(session: Session, token: str) -> InvalidToken:
         invalid_token = create_invalid_token(session, token)
         session.commit()
         return invalid_token
-    except:
+    except Exception as e:
+        print(e)
         session.rollback()

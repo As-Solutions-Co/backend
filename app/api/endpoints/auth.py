@@ -1,13 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.deps import SessionDep, TokenDep
 from app.models.invalid_token_model import InvalidToken
 from app.schemas.auth_schema import RegisterRequest
 from app.schemas.token_schema import Token
-from app.services.auth_service import login_service, logout_service, register_service
+from app.services.auth_service import login_service, register_service
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
