@@ -1,0 +1,63 @@
+{
+  "acknowledged-issue-numbers": [
+    34892
+  ],
+  "vpc-provider:account=659788916661:filter.vpc-id=vpc-0f728e80e72c63ceb:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0f728e80e72c63ceb",
+    "vpcCidrBlock": "172.31.0.0/16",
+    "ownerAccountId": "659788916661",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-032c3c7c47b793635",
+            "cidr": "172.31.0.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-060d81b76ef612579"
+          },
+          {
+            "subnetId": "subnet-0072af0bb31d898a1",
+            "cidr": "172.31.80.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-060d81b76ef612579"
+          },
+          {
+            "subnetId": "subnet-045e20e300adc7318",
+            "cidr": "172.31.16.0/20",
+            "availabilityZone": "us-east-1c",
+            "routeTableId": "rtb-060d81b76ef612579"
+          },
+          {
+            "subnetId": "subnet-0b22bfe644d0c1977",
+            "cidr": "172.31.32.0/20",
+            "availabilityZone": "us-east-1d",
+            "routeTableId": "rtb-060d81b76ef612579"
+          },
+          {
+            "subnetId": "subnet-034af4cf08433267a",
+            "cidr": "172.31.48.0/20",
+            "availabilityZone": "us-east-1e",
+            "routeTableId": "rtb-060d81b76ef612579"
+          },
+          {
+            "subnetId": "subnet-05580155525b5374e",
+            "cidr": "172.31.64.0/20",
+            "availabilityZone": "us-east-1f",
+            "routeTableId": "rtb-060d81b76ef612579"
+          }
+        ]
+      }
+    ]
+  },
+  "security-group:account=659788916661:region=us-east-1:securityGroupId=sg-0d56636fc8ecdbab8": {
+    "securityGroupId": "sg-0d56636fc8ecdbab8",
+    "allowAllOutbound": false
+  },
+  "security-group:account=659788916661:region=us-east-1:securityGroupId=sg-059c6c6a5482ef419": {
+    "securityGroupId": "sg-059c6c6a5482ef419",
+    "allowAllOutbound": false
+  }
+}
