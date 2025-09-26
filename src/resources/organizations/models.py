@@ -8,7 +8,7 @@ class OrganizationBase(SQLModel):
     logo: str
 
 
-class Organization(OrganizationBase):
+class Organization(OrganizationBase, table=True):
     id: UUID = Field(primary_key=True, default_factory=uuid4)
 
 
