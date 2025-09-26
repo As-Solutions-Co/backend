@@ -1,8 +1,8 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as apigtw from "aws-cdk-lib/aws-apigatewayv2";
-import * as integrations from "aws-cdk-lib/aws-apigatewayv2-integrations";
+import * as apigtw from "aws-cdk-lib/aws-apigateway";
+
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as rds from "aws-cdk-lib/aws-rds";
@@ -144,33 +144,29 @@ export class BackendStack extends cdk.Stack {
       }
     );
 
-    const api = new apigtw.HttpApi(this, "api");
+    const api = new apigtw.RestApi(this, "academy_api");
 
-    api.addRoutes({
-      path: "/organization/{id}",
-      methods: [apigtw.HttpMethod.GET],
-      integration: new integrations.HttpLambdaIntegration(
-        "get_organization_by_id",
-        organization_manager
-      ),
-    });
-    api.addRoutes({
-      path: "/organization",
-      methods: [apigtw.HttpMethod.GET],
-      integration: new integrations.HttpLambdaIntegration(
-        "get_organizations",
-        organization_manager
-      ),
-    });
+    const organization_resource = api.root.addResource("organization");
 
-    api.addRoutes({
-      path: "/organization",
-      methods: [apigtw.HttpMethod.POST],
-      integration: new integrations.HttpLambdaIntegration(
-        "post_organization",
-        organization_manager
-      ),
-    });
+    const organization_id_resource = organization_resource.addResource("{id}");
+    organization_id_resource.addMethod(
+      "GET",
+      new apigtw.LambdaIntegration(organization_manager)
+    );
+    organization_id_resource.addMethod(
+      "DELETE",
+      new apigtw.LambdaIntegration(organization_manager)
+    );
+
+    organization_resource.addMethod(
+      "GET",
+      new apigtw.LambdaIntegration(organization_manager)
+    );
+
+    organization_resource.addMethod(
+      "POST",
+      new apigtw.LambdaIntegration(organization_manager)
+    );
 
     project_db.grantConnect(organization_manager, "postgres");
     database_secret.grantRead(organization_manager);
