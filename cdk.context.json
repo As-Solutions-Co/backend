@@ -59,5 +59,69 @@
   "security-group:account=659788916661:region=us-east-1:securityGroupId=sg-059c6c6a5482ef419": {
     "securityGroupId": "sg-059c6c6a5482ef419",
     "allowAllOutbound": false
+  },
+  "vpc-provider:account=659788916661:filter.vpc-id=vpc-0562917520fe32449:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0562917520fe32449",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "ownerAccountId": "659788916661",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Isolated",
+        "type": "Isolated",
+        "subnets": [
+          {
+            "subnetId": "subnet-0c6211650683c3240",
+            "cidr": "10.0.128.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0d106c9ac5f5ad369"
+          },
+          {
+            "subnetId": "subnet-0b4a6170a43559606",
+            "cidr": "10.0.144.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-00c3fe967581067ef"
+          },
+          {
+            "subnetId": "subnet-0290ea431f481e64a",
+            "cidr": "10.0.160.0/20",
+            "availabilityZone": "us-east-1c",
+            "routeTableId": "rtb-0864575b934b3e972"
+          }
+        ]
+      },
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0e88b5066a3fec1a4",
+            "cidr": "10.0.0.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-03a69de5b0d68e430"
+          },
+          {
+            "subnetId": "subnet-081bbc30af4f63171",
+            "cidr": "10.0.16.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-03a69de5b0d68e430"
+          },
+          {
+            "subnetId": "subnet-0c301cc7bfc795bb5",
+            "cidr": "10.0.32.0/20",
+            "availabilityZone": "us-east-1c",
+            "routeTableId": "rtb-03a69de5b0d68e430"
+          }
+        ]
+      }
+    ]
+  },
+  "security-group:account=659788916661:region=us-east-1:securityGroupName=default:vpcId=vpc-0562917520fe32449": {
+    "securityGroupId": "sg-0665ce570fe1b5d46",
+    "allowAllOutbound": false
+  },
+  "security-group:account=659788916661:region=us-east-1:securityGroupId=sg-0665ce570fe1b5d46": {
+    "securityGroupId": "sg-0665ce570fe1b5d46",
+    "allowAllOutbound": false
   }
 }
