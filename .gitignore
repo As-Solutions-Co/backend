@@ -9,3 +9,5 @@ cdk.out
 .env
 
 **/dependencies
+
+**/.ruff_cache
