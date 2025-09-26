@@ -4,6 +4,10 @@ annotated-types==0.7.0 \
     --hash=sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53 \
     --hash=sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89
     # via pydantic
+aws-lambda-powertools==3.20.0 \
+    --hash=sha256:1641eaf38e59470a28262e34d5d447bf6713223ea8896bf5ce442ffb3418c9c9 \
+    --hash=sha256:97cdaa52060972a59d0e769e197d6bffe5a1869c54b6a0c6c69bf31656de5bdd
+    # via src
 boto3==1.40.36 \
     --hash=sha256:bfc1f3d5c4f5d12b8458406b8972f8794ac57e2da1ee441469e143bc0440a5c3 \
     --hash=sha256:d7c1fe033f491f560cd26022a9dcf28baf877ae854f33bc64fffd0df3b9c98be
@@ -37,6 +41,7 @@ jmespath==1.0.1 \
     --hash=sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980 \
     --hash=sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe
     # via
+    #   aws-lambda-powertools
     #   boto3
     #   botocore
 psycopg2-binary==2.9.10 \
@@ -109,6 +114,7 @@ typing-extensions==4.15.0 \
     --hash=sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via
+    #   aws-lambda-powertools
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
