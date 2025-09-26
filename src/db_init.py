@@ -1,9 +1,10 @@
-from sqlmodel import SQLModel
 from db import engine
-from organizations.models import Organization  # noqa
+from organizations.models import Organization as Organization
+from sqlmodel import SQLModel
+from students.models import Student as Student
 
 
-def handler(event, context):
+def handler(event, context):  # noqa
     try:
         SQLModel.metadata.create_all(engine)
         return {"message": "success"}

@@ -1,9 +1,9 @@
 import json
-from sqlmodel import create_engine, Session
 import os
+
 import boto3
 from botocore.exceptions import ClientError
-
+from sqlmodel import create_engine
 
 secret_id = os.getenv("SECRET_ARN")
 region_name = "us-east-1"
