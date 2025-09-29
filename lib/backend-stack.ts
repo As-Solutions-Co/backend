@@ -12,6 +12,8 @@ import * as triggers from "aws-cdk-lib/triggers";
 import * as path from "path";
 import * as fs from "fs-extra";
 import * as os from "os";
+import { exec } from "child_process";
+import { PythonLayerVersion } from "@aws-cdk/aws-lambda-python-alpha";
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -28,14 +30,28 @@ export class BackendStack extends cdk.Stack {
       "sg-0665ce570fe1b5d46"
     );
 
-    const requirements_layer = new lambda.LayerVersion(
-      this,
-      "dependencies_layer",
-      {
-        compatibleRuntimes: [project_runtime],
-        description: "Includes all project requirements",
-        code: lambda.Code.fromAsset("./src/dependencies/"),
+    const srcPath = path.join(__dirname, "..", "src");
+    const tempDeps = path.join(os.tmpdir(), "temp-deps");
+    const depFiles = ["pyproject.toml", "uv.lock"];
+    fs.ensureDirSync(tempDeps);
+
+    depFiles.forEach((file) => {
+      const filePath = path.join(srcPath, file);
+      if (fs.existsSync(filePath)) {
+        fs.copySync(filePath, path.join(tempDeps, file));
       }
+    });
+
+    const dependenciesLayer = new PythonLayerVersion(this, "Dependenci_layer", {
+      entry: tempDeps,
+      compatibleArchitectures: [lambda.Architecture.ARM_64],
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_13],
+    });
+
+    const powerToolsLayer = lambda.LayerVersion.fromLayerVersionArn(
+      this,
+      "Powertools layer",
+      "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python313-arm64:19"
     );
 
     const shared_code_layer = new lambda.LayerVersion(
@@ -105,7 +121,7 @@ export class BackendStack extends cdk.Stack {
       }),
       securityGroups: [default_vpc_sg],
       timeout: cdk.Duration.minutes(5),
-      layers: [requirements_layer, shared_code_layer, models_layer],
+      layers: [dependenciesLayer, shared_code_layer, models_layer],
       vpc: project_vpc,
       vpcSubnets: project_vpc.selectSubnets({
         subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
@@ -114,14 +130,8 @@ export class BackendStack extends cdk.Stack {
         SECRET_ARN: database_secret.secretArn,
         DB_NAME: "postgres",
       },
+      architecture: lambda.Architecture.ARM_64,
     });
-
-    // const db_schema_trigger = new triggers.Trigger(this, "db_schema_trigger", {
-    //   handler: db_schema_fn,
-    //   timeout: cdk.Duration.minutes(10),
-    //   invocationType: triggers.InvocationType.EVENT,
-    //   executeAfter: [project_db, db_schema_fn],
-    // });
 
     const organization_manager = new lambda.Function(
       this,
@@ -130,7 +140,7 @@ export class BackendStack extends cdk.Stack {
         runtime: project_runtime,
         code: lambda.Code.fromAsset("./src/resources/organizations/"),
         handler: "main.handler",
-        layers: [requirements_layer, shared_code_layer],
+        layers: [dependenciesLayer, shared_code_layer, powerToolsLayer],
         vpc: project_vpc,
         vpcSubnets: project_vpc.selectSubnets({
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
@@ -141,22 +151,14 @@ export class BackendStack extends cdk.Stack {
         },
         securityGroups: [default_vpc_sg],
         timeout: cdk.Duration.seconds(20),
+        architecture: lambda.Architecture.ARM_64,
+        memorySize: 256,
       }
     );
 
     const api = new apigtw.RestApi(this, "academy_api");
 
-    const organization_resource = api.root.addResource("organization");
-
-    const organization_id_resource = organization_resource.addResource("{id}");
-    organization_id_resource.addMethod(
-      "GET",
-      new apigtw.LambdaIntegration(organization_manager)
-    );
-    organization_id_resource.addMethod(
-      "DELETE",
-      new apigtw.LambdaIntegration(organization_manager)
-    );
+    const organization_resource = api.root.addResource("organizations");
 
     organization_resource.addMethod(
       "GET",
@@ -165,6 +167,21 @@ export class BackendStack extends cdk.Stack {
 
     organization_resource.addMethod(
       "POST",
+      new apigtw.LambdaIntegration(organization_manager)
+    );
+
+    organization_resource
+      .addResource("swagger")
+      .addMethod("GET", new apigtw.LambdaIntegration(organization_manager));
+
+    const organization_id_resource = organization_resource.addResource("{id}");
+
+    organization_id_resource.addMethod(
+      "GET",
+      new apigtw.LambdaIntegration(organization_manager)
+    );
+    organization_id_resource.addMethod(
+      "DELETE",
       new apigtw.LambdaIntegration(organization_manager)
     );
 
