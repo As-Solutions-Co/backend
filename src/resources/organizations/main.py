@@ -11,15 +11,19 @@ from models import Organization, OrganizationCreate
 from sqlmodel import Session
 
 app = APIGatewayRestResolver(enable_validation=True)
+app.enable_swagger(
+    path="/organizations/swagger",
+    title="Organizations microservice documentation",
+)
 
 
-@app.get("/organization")
+@app.get("/organizations")
 def get_organizations() -> list[Organization]:
     result = read_organization()
     return result
 
 
-@app.get("/organization/<id>")
+@app.get("/organizations/<id>")
 def get_organization(id: UUID) -> Organization:
     result = read_organization_by_id(id)
     if not result:
@@ -27,7 +31,7 @@ def get_organization(id: UUID) -> Organization:
     return result
 
 
-@app.post("/organization")
+@app.post("/organizations")
 def post_organization(payload: OrganizationCreate) -> Organization:
     with Session(engine) as session:
         try:
@@ -40,7 +44,7 @@ def post_organization(payload: OrganizationCreate) -> Organization:
             raise InternalServerError(f"Error creating organization, {e.__str__()}")
 
 
-@app.delete("/organization/<id>")
+@app.delete("/organizations/<id>")
 def delete_organization(id: UUID) -> Organization:
     result = read_organization_by_id(id)
     if not result:
@@ -56,3 +60,6 @@ def delete_organization(id: UUID) -> Organization:
 
 def handler(event, context):
     return app.resolve(event, context)
+
+
+## Validate options method
