@@ -4,5 +4,5 @@ import { BackendStack } from "../lib/backend-stack";
 
 const app = new cdk.App();
 new BackendStack(app, "BackendStack", {
-  env: { account: "659788916661", region: "us-east-1" },
+  env: { account: "057149785827", region: "us-east-1" },
 });
