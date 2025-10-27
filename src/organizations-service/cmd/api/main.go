@@ -3,50 +3,54 @@ package main
 import (
 	"database/sql"
 	"log"
-	"net/http"
-	"organizations/internal/domain"
-	"organizations/internal/repository/pg"
-	"organizations/internal/services"
+	"os"
+	"time"
+
+	"organizations/internal/adapters/handler"
+	"organizations/internal/adapters/repository"
+	"organizations/internal/application"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
+var pgClient *sql.DB
+
+func init() {
+	var err error
+	connURI := os.Getenv("CONN_URI")
+	if connURI == "" {
+		log.Fatal("CONN_URI must be set")
+	}
+	log.Printf("Attempting to connect with URI: %s\n", connURI)
+	pgClient, err = sql.Open("postgres", connURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+	pgClient.SetConnMaxLifetime(30 * time.Second)
+	pgClient.SetConnMaxIdleTime(5 * time.Second)
+	pgClient.SetMaxOpenConns(10)
+	pgClient.SetMaxIdleConns(5)
+
+	err = pgClient.Ping()
+	if err != nil {
+		log.Fatalf("Initial database ping failed: %v", err)
+	}
+
+	log.Println("Database connection successful and pool configured.")
+}
+
 func main() {
-	dbUri := "postgres://postgres:admin@172.17.0.2:5432/golang?sslmode=disable"
-	db, err := sql.Open("postgres", dbUri)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	db.SetMaxOpenConns(60)
+	repo := repository.NewPostgresRepository(pgClient)
+	service := application.NewService(repo)
+	GinHandler := handler.NewGinHandler(*service)
 
 	router := gin.Default()
-	router.POST("/organization", func(c *gin.Context) {
-		var organizationIn domain.Organization
-		if err := c.BindJSON(&organizationIn); err != nil {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{
-				"message": "Invalid body",
-			})
-			return
-		}
-		id, err := services.CreateService(organizationIn, pg.NewAdapter(db))
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-		c.IndentedJSON(http.StatusOK, gin.H{
-			"data": id,
-		})
-	})
+	router.POST("/organizations", GinHandler.CreateOrganizationHandler)
+	router.GET("/organizations", GinHandler.GetAllOrganizationsHandler)
+	router.GET("/organizations/:id", GinHandler.GetOrganizationByIdHandler)
 
-	err = router.Run()
-	if err != nil {
+	if err := router.Run(":8080"); err != nil {
 		log.Fatal(err)
 	}
 }
