@@ -3,7 +3,8 @@ WORKDIR /build_stage
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o app cmd/api/main.go
+RUN go mod tidy
+RUN CGO_ENABLED=0 go build -tags lambda.norpc -ldflags="-s -w" -o app cmd/api/main.go
 
 FROM scratch
 WORKDIR /app
