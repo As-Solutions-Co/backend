@@ -1,3 +1,0 @@
-{
-  "python.analysis.extraPaths": ["./src/resources/", "./src/shared/python"]
-}
