@@ -3,18 +3,23 @@ package main
 import (
 	"database/sql"
 	"log"
+	"organizations/internal/adapters/broker"
+	"organizations/internal/domain"
 	"os"
 	"time"
 
 	"organizations/internal/adapters/handler"
 	"organizations/internal/adapters/repository"
-	"organizations/internal/application"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-var pgClient *sql.DB
+var (
+	pgClient *sql.DB
+	rabbitCh *amqp.Channel
+)
 
 func init() {
 	var err error
@@ -22,7 +27,6 @@ func init() {
 	if connURI == "" {
 		log.Fatal("CONN_URI must be set")
 	}
-	log.Printf("Attempting to connect with URI: %s\n", connURI)
 	pgClient, err = sql.Open("postgres", connURI)
 	if err != nil {
 		log.Fatal(err)
@@ -36,19 +40,30 @@ func init() {
 	if err != nil {
 		log.Fatalf("Initial database ping failed: %v", err)
 	}
+	rabbitConn, err := amqp.Dial(os.Getenv("RABBIT_MQ_URL"))
+	if err != nil {
+		log.Fatalf("Failed to connect to RabbitMQ: %s", err)
+	}
+	rabbitCh, err = rabbitConn.Channel()
+	if err != nil {
+		log.Fatalf("Failed to open a channel: %s", err)
+	}
 
-	log.Println("Database connection successful and pool configured.")
 }
 
 func main() {
-	repo := repository.NewPostgresRepository(pgClient)
-	service := application.NewService(repo)
+	defer rabbitCh.Close()
+	defer pgClient.Close()
+	pgRepo := repository.NewPostgresRepository(pgClient)
+	rabbitBroker := broker.NewRabbitMQPublisher(rabbitCh)
+	service := domain.NewService(pgRepo, rabbitBroker)
 	GinHandler := handler.NewGinHandler(*service)
 
 	router := gin.Default()
 	router.POST("/organizations", GinHandler.CreateOrganizationHandler)
 	router.GET("/organizations", GinHandler.GetAllOrganizationsHandler)
 	router.GET("/organizations/:id", GinHandler.GetOrganizationByIdHandler)
+	//router.PUT("/organizations/:id",)
 
 	if err := router.Run(":8080"); err != nil {
 		log.Fatal(err)
