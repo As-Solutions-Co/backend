@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"organizations/internal/application"
 	"organizations/internal/domain"
 	"time"
 
@@ -12,10 +11,10 @@ import (
 )
 
 type GinHandler struct {
-	service application.Service
+	service domain.Service
 }
 
-func NewGinHandler(service application.Service) *GinHandler {
+func NewGinHandler(service domain.Service) *GinHandler {
 	return &GinHandler{service}
 }
 
@@ -31,7 +30,7 @@ func (h *GinHandler) CreateOrganizationHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	newOrganization, err := h.service.CreateOrganization(ctx, organizationIn)
+	newOrganization, err := h.service.Create(ctx, organizationIn)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			c.JSON(http.StatusGatewayTimeout, gin.H{"error": "request timed out"})
@@ -47,7 +46,7 @@ func (h *GinHandler) GetOrganizationByIdHandler(c *gin.Context) {
 	id := c.Param("id")
 	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*3)
 	defer cancel()
-	organization, err := h.service.GetOrganizationById(ctx, id)
+	organization, err := h.service.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			c.JSON(http.StatusGatewayTimeout, gin.H{"error": "request timed out"})
