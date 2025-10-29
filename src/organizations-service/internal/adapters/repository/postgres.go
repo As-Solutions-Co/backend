@@ -56,3 +56,23 @@ func (r PostgresRepository) FindAll(ctx context.Context) ([]domain.Organization,
 	}
 	return organizations, nil
 }
+
+func (r PostgresRepository) Update(ctx context.Context, updates map[string]string) error {
+	return errors.New("not implemented")
+}
+
+func (r PostgresRepository) Delete(ctx context.Context, id string) error {
+	query := "DELETE FROM ORGANIZATIONS WHERE ID = $1"
+	result, err := r.client.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return domain.OrganizationNotFoundError
+	}
+	return nil
+}
