@@ -1,8 +1,9 @@
-package domain
+package application
 
 import (
 	"context"
 	"math/rand"
+	"organizations/internal/domain"
 	"organizations/internal/ports"
 	"time"
 )
@@ -16,7 +17,7 @@ func NewService(r ports.Repository, b ports.Broker) *Service {
 	return &Service{r, b}
 }
 
-func (s Service) Create(ctx context.Context, orgIn Organization) (any, error) {
+func (s Service) Create(ctx context.Context, orgIn domain.Organization) (any, error) {
 	orgIn.Id = int(time.Now().UnixMicro()) * rand.Intn(10000)
 	err := s.repo.Save(ctx, orgIn)
 	if err != nil {
@@ -25,7 +26,7 @@ func (s Service) Create(ctx context.Context, orgIn Organization) (any, error) {
 	return orgIn, nil
 }
 
-func (s Service) GetById(ctx context.Context, id string) (Organization, error) {
+func (s Service) GetById(ctx context.Context, id string) (domain.Organization, error) {
 	org, err := s.repo.Find(ctx, id)
 	if err != nil {
 		return org, err
@@ -37,7 +38,7 @@ func (s Service) GetById(ctx context.Context, id string) (Organization, error) {
 	return org, nil
 }
 
-func (s Service) GetAllOrganizations(ctx context.Context) ([]Organization, error) {
+func (s Service) GetAllOrganizations(ctx context.Context) ([]domain.Organization, error) {
 	return s.repo.FindAll(ctx)
 }
 

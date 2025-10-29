@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"organizations/internal/application"
 	"organizations/internal/domain"
 	"time"
 
@@ -11,10 +12,10 @@ import (
 )
 
 type GinHandler struct {
-	service domain.Service
+	service application.Service
 }
 
-func NewGinHandler(service domain.Service) *GinHandler {
+func NewGinHandler(service application.Service) *GinHandler {
 	return &GinHandler{service}
 }
 

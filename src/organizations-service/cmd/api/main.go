@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"organizations/internal/adapters/broker"
-	"organizations/internal/domain"
+	"organizations/internal/application"
 	"os"
 	"time"
 
@@ -56,7 +56,7 @@ func main() {
 	defer pgClient.Close()
 	pgRepo := repository.NewPostgresRepository(pgClient)
 	rabbitBroker := broker.NewRabbitMQPublisher(rabbitCh)
-	service := domain.NewService(pgRepo, rabbitBroker)
+	service := application.NewService(pgRepo, rabbitBroker)
 	GinHandler := handler.NewGinHandler(*service)
 
 	router := gin.Default()
