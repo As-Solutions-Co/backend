@@ -1,8 +1,3 @@
-Perfecto, Juan Diego 👏
-Lo que quieres hacer (una plataforma académica basada en microservicios, limpia y siguiendo los **12 factores**) es un proyecto **ideal para aprender desarrollo profesional backend** con Go.
-
-A continuación te dejo un **plan de desarrollo completo**, dividido por **etapas**, incluyendo:
-
 * Microservicios a construir
 * Casos de uso
 * Entidades principales
