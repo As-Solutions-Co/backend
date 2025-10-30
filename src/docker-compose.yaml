@@ -3,8 +3,6 @@ services:
     image: postgres
     environment:
       - POSTGRES_PASSWORD=Admin
-    volumes:
-      - ./db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
